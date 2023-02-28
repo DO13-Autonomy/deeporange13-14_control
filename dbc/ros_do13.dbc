@@ -45,8 +45,8 @@ BO_ 902 ROS_Supervisor_msgs: 8 ROS
  SG_ ROS_Health : 8|1@1+ (1,0) [0|255] "-" Vector__XXX
 
 BO_ 903 ROS_Control_msg: 8 ROS
- SG_ Linear_X_Demand : 0|32@1- (1,0) [-3.4E+038|3.4E+038] "m/s" Vector__XXX
- SG_ Angular_Z_Demand : 32|32@1- (1,0) [-3.4E+038|3.4E+038] "rad/s" Vector__XXX
+ SG_ Linear_X_Demand : 0|16@1- (0.001,0) [-32.768|+32.767] "m/s" Vector__XXX
+ SG_ Angular_Z_Demand : 16|16@1- (0.001,0) [-32.768|+32.767] "rad/s" Vector__XXX
 
 BO_ 25 ROS_Control_test: 8 ROS
  SG_ Linear_X_Demand : 0|32@1- (1,0) [-3.4E+038|3.4E+038] "m/s" Vector__XXX

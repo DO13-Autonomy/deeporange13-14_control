@@ -108,6 +108,15 @@ namespace deeporange_dbw_ros
         // Raptor Comms Variables - unused
         int sysState_;
 
+        float a1=-0.758629674;
+        float b0=0.12068516;
+        float b1=0.12068516;
+        float vel_lin_x_prev=0.0;
+        float vel_lin_x_filt=0.0;
+        float vel_lin_x_filt_prev=0.0;
+        float vel_ang_z_filt_prev=0.0;
+        float vel_ang_z_prev=0.0;
+        float vel_ang_z_filt=0.0;
     };
 } // deeporange_dbw_ros
 

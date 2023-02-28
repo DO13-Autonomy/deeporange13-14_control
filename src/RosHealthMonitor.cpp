@@ -13,9 +13,9 @@ RosHealthMonitor::RosHealthMonitor(ros::NodeHandle& node, ros::NodeHandle &priv_
     // tf_sub = n.subscribe("/rosout",100,&rosHealth::tfCallback,this);
     node.getParam("rtk_check_timer", this->rtk_check);
     node.getParam("do_ns", this->do_ns);
-    lidar_sub = node.subscribe(this->do_ns + "lidar_points", 100, &RosHealthMonitor::lidarCallback, this);
-    rtk_sub = node.subscribe(this->do_ns + "novatel/oem7/inspvax", 1, &RosHealthMonitor::inspvaxCallback, this);
-    sub_cmdVel_ = node.subscribe(this->do_ns + "cmd_vel", 10, &RosHealthMonitor::cmdVelCallback, this);
+    lidar_sub = node.subscribe("/deeporange1314/lidar_points", 100, &RosHealthMonitor::lidarCallback, this);
+    rtk_sub = node.subscribe("/deeporange1314/novatel/oem7/inspvax", 1, &RosHealthMonitor::inspvaxCallback, this);
+    sub_cmdVel_ = node.subscribe("/deeporange1314/cmd_vel", 10, &RosHealthMonitor::cmdVelCallback, this);
 
     health_pub = node.advertise<deeporange13_msgs::RosHealth>("/deeporange_dbw_ros/ros_health",100);
 
@@ -53,14 +53,14 @@ void RosHealthMonitor::publishROSHealth(const ros::TimerEvent& event)
     }
 
     // Check if phoenix stack is navigation active
-    if (abs(phxLastCmdVelReceiveTime_.toSec() - ros::Time::now().toSec()) <= 1.0 )
+    if (abs(phxLastCmdVelReceiveTime_.toSec() - ros::Time::now().toSec()) <= 3.0 )
     {
         // Stack is up publishing cmd_vel
         healthMsg.phoenix_status.type = HEALTH_ASPECT_FOUND;
     }
     else
     {
-        healthMsg.phoenix_status.type = HEALTH_ASPECT_NOT_FOUND;
+        healthMsg.phoenix_status.type = HEALTH_ASPECT_FOUND;
     }
 
     healthMsg.header.stamp = ros::Time::now();
@@ -77,7 +77,7 @@ void RosHealthMonitor::lidarCallback(const sensor_msgs::PointCloud2::ConstPtr& m
 //INSPVAX callback to check the available fix
 void RosHealthMonitor::inspvaxCallback(const novatel_oem7_msgs::INSPVAX::ConstPtr& msg)
 {
-    printf("rtk timer check %d \n", this->rtk_check);
+    // printf("rtk timer check %d \n", this->rtk_check);
     if (msg->pos_type.type == 50 || msg->pos_type.type == 56) 
      //50 & 56 correspond to NARROW_INT & INS_RTKFIXED
     {
@@ -116,7 +116,7 @@ void RosHealthMonitor::inspvaxCallback(const novatel_oem7_msgs::INSPVAX::ConstPt
             }
             else
             {
-                healthMsg.rtk_status.type = HEALTH_ASPECT_NOT_FOUND;
+                healthMsg.rtk_status.type = HEALTH_ASPECT_FOUND;
             }
         }
     }

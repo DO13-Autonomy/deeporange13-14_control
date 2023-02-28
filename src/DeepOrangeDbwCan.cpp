@@ -21,8 +21,8 @@ namespace deeporange_dbw_ros
         sub_cmdTq = node.subscribe("/deeporange1314/cmd_tq", 10, &DeepOrangeDbwCan::publishTorquetoCAN, this, ros::TransportHints().tcpNoDelay(true));
 
         // Novatel subscribers & publisher for measured velocities
-        sub_odom_ = node.subscribe("/novatel/oem7/odom", 10, &DeepOrangeDbwCan::getMeasuredVx, this, ros::TransportHints().tcpNoDelay(true));
-        sub_gpsImu_ = node.subscribe("/gps/imu", 10, &DeepOrangeDbwCan::getMeasuredWz, this, ros::TransportHints().tcpNoDelay(true));
+        sub_odom_ = node.subscribe("/deeporange1314/novatel/oem7/odom", 10, &DeepOrangeDbwCan::getMeasuredVx, this, ros::TransportHints().tcpNoDelay(true));
+        sub_gpsImu_ = node.subscribe("/deeporange1314/gps/imu", 10, &DeepOrangeDbwCan::getMeasuredWz, this, ros::TransportHints().tcpNoDelay(true));
         pub_measuredVel_ = node.advertise<deeporange13_msgs::MeasuredVelocity>("measured_velocities", 10);
         sub_measuredVel_ = node.subscribe("measured_velocities", 10, &DeepOrangeDbwCan::publishMeasuredVeltoCAN, this, ros::TransportHints().tcpNoDelay(true));
 
@@ -93,6 +93,7 @@ namespace deeporange_dbw_ros
         }
     }
 
+    //THIS CALLBACK IS NOT USED !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     void DeepOrangeDbwCan::publishTrackCommandstoCAN(const deeporange13_msgs::TrackVelocity& msg)
     // Get Track commands and publish to CAN
     {
@@ -105,8 +106,8 @@ namespace deeporange_dbw_ros
         But if architecture is changed in future, changes must be made here
         */
         {
-            message->GetSignal("Left_TrackVel_Demand")->SetResult(msg.linear.leftTrackSpeed*1000);
-            message->GetSignal("Right_TrackVel_Demand")->SetResult(msg.linear.rightTrackSpeed*1000);
+            message->GetSignal("Left_TrackVel_Demand")->SetResult(msg.linear.leftTrackSpeed);
+            message->GetSignal("Right_TrackVel_Demand")->SetResult(msg.linear.rightTrackSpeed);
         }
         else
         {
@@ -162,8 +163,18 @@ namespace deeporange_dbw_ros
         But if architecture is changed in future, changes must be made here
         */
         {
-            message->GetSignal("Linear_X_Demand")->SetResult(msg->linear.x*(1000));
-            message->GetSignal("Angular_Z_Demand")->SetResult(msg->angular.z*(1000));
+            //IIR filter to have smoother velocities
+            vel_lin_x_filt = b0*msg->linear.x + b1*vel_lin_x_prev - a1*vel_lin_x_filt_prev;
+            vel_ang_z_filt = b0*msg->angular.z + b1*vel_ang_z_prev - a1*vel_ang_z_filt_prev;        
+            
+            vel_lin_x_filt_prev = vel_lin_x_filt;
+            vel_ang_z_filt_prev = vel_ang_z_filt;
+            vel_lin_x_prev = msg->linear.x;
+            vel_ang_z_prev = msg->angular.z;
+
+
+            message->GetSignal("Linear_X_Demand")->SetResult(vel_lin_x_filt);
+            message->GetSignal("Angular_Z_Demand")->SetResult(vel_ang_z_filt);
             //message1->GetSignal("Linear_X_Demand")->SetResult(msg->linear.x*(1000));
             //message1->GetSignal("Angular_Z_Demand")->SetResult(msg->angular.z*(1000));
         }
@@ -204,7 +215,8 @@ namespace deeporange_dbw_ros
         vectorWz_.push_back(msg.angular_velocity.z);
         if(vectorWz_.size()==4){
             for(int i=0; i<4; i++){
-                averageWz_ = averageWz_ + vectorWz_[i];
+                //averageWz_ = averageWz_ + vectorWz_[i];
+                averageWz_ = averageWz_ + vectorWz_[3];
             }
             averageWz_ = averageWz_/4;
 
@@ -226,7 +238,8 @@ namespace deeporange_dbw_ros
         vectorVx_.push_back(msg.twist.twist.linear.x);
         if(vectorVx_.size()==2){
             for(int i=0; i<2; i++){
-                averageVx_ = averageVx_ + vectorVx_[i];
+                //averageVx_ = averageVx_ + vectorVx_[i];
+                averageVx_ = averageVx_ + vectorVx_[1];
             }
             averageVx_ = averageVx_/2;
             

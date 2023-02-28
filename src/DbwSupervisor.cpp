@@ -59,12 +59,12 @@ namespace deeporange_dbw_ros
                 }
                 else if (is_Phx_NavigationActive_ == false)
                 {
-                    rosSupMsg_.ros_state = AU3_NAV_INACTIVE;
+                    rosSupMsg_.ros_state = AU2_NAV_ACTIVE;
                     ROS_INFO("Stack navigation is not publishing cmd_vels");
                 }
                 else
                 {
-                    rosSupMsg_.ros_state = AU3_NAV_INACTIVE;
+                    rosSupMsg_.ros_state = AU2_NAV_ACTIVE;
                     ROS_INFO("There is a non-zero cmd_vel already being published. You do not want to start navigation like this");
                 }
 
@@ -99,13 +99,13 @@ namespace deeporange_dbw_ros
                 }
                 else
                 {
-                    rosSupMsg_.ros_state = AU3_NAV_INACTIVE;
+                    rosSupMsg_.ros_state = AU2_NAV_ACTIVE;
                 }
             }
             else
             // probably an erroneous/empty msg
             {
-                rosSupMsg_.ros_state = AU3_NAV_INACTIVE;
+                rosSupMsg_.ros_state = AU2_NAV_ACTIVE;
                 ROS_WARN("The message object 'ros_state' is empty/erroneous right now. Code should not have arrived here");
             }
             
