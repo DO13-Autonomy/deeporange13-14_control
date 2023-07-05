@@ -11,7 +11,7 @@
 ### How to Use:
 - To add/update CAN msg IDs- update these in the dbc in the `dbc` folder as well as `dispatch_can_msgs.h` include file
 - Vehicle and subsystem states are enumerated in `states_enum.h`
-- 
+
 
 ### Dependencies:
 - `can_dbc_parser`: Developed by New Eagle as part of metapackage - https://github.com/NewEagleRaptor/raptor-dbw-ros
