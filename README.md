@@ -25,5 +25,7 @@
  - Shubham Gupta (gupta9@clemson.edu)
  - Shubhankar Kulkarni (sskulka@clemson.edu)
  - Priyanshu Rawat (prawat@clemson.edu)
+ - Vasudev Purohit (vpurohi@clemson.edu)
+ - Sanskruti Jadhav (sanskrj@clemson.edu)
  - Program Manager/Maintainer: Chris Paredis (paredis@clemson.edu)
 
